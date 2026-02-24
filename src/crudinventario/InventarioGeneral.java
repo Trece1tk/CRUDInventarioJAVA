@@ -15,6 +15,9 @@ public class InventarioGeneral {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        frmArticulo fArticulo = new frmArticulo();
+        fArticulo.setVisible(true);
+        
     }
     
 }
