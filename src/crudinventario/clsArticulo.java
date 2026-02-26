@@ -33,6 +33,12 @@ public class clsArticulo {
     
     // guardar informacion
     public void guardar(){
+        //instalacion de la clase de MODELO
+        mArticulo article = new mArticulo();
+        // enviamos la cadena de texto para guardar en el archivo
+        article.Insertar(this.aTexto());
+             
+        
         System.out.println(this.aTexto());
         
     }
