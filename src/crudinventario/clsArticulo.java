@@ -4,42 +4,67 @@
  */
 package crudinventario;
 
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author Joel Flores
  */
 public class clsArticulo {
-    //atributos que necesito que tenga mi objeto
+    // atributos que necesito que tenga mi objeto
     private String codigo;
     private String descripcion;
     private Double precio;
-    
-    
-    //constructor
-    public clsArticulo(String codigo, String descripcion, Double precio){
+
+    // constructor
+    public clsArticulo(String codigo, String descripcion, Double precio) {
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.precio = precio;
-        
-    }
-    // imprimir en consola los datos del articulo
-    public String aTexto(){
-        String articulo = this.codigo + "|" + this.descripcion + "|" + this.precio;
-        System.out.print(articulo);
-        return articulo;
-        
-        
+
     }
     
+    public clsArticulo() {
+        
+    }
+
+
+    // imprimir en consola los datos del articulo
+    public String aTexto() {
+        // Solo retornamos la cadena, no imprimimos aquí
+        return this.codigo + "|" + this.descripcion + "|" + this.precio;
+    }
+
     // guardar informacion
-    public void guardar(){
-        //instalacion de la clase de MODELO
+    public void guardar() {
         mArticulo article = new mArticulo();
-        // enviamos la cadena de texto para guardar en el archivo
-        article.Insertar(this.aTexto());
-             
+        String textoArticulo = this.aTexto(); // Obtenemos el texto una sola vez
+
+        // Enviamos la cadena para guardar en el archivo
+        article.Insertar(textoArticulo);
+
+        // Si quieres verlo en consola una sola vez:
+        System.out.println(textoArticulo);
+    }
+    
+    
+    
+    public DefaultListModel<String> llenarLista(){
+        /// instancia desde los daros (modelo)
+        mArticulo mArticle = new mArticulo();
+        // llenamos la variable con los datos desde le modelo
         
-        System.out.println(this.aTexto());
+        ArrayList<String> datos = mArticle.Consultar();
+        //creamos la plantilla en blanco para el modelo 
+        DefaultListModel<String> modelLista = new DefaultListModel<>();
+        // llenamos in plantilla con los datos del modelo
+        for (String registro: datos){
+            modelLista.addElement (registro);
+            
+        }
         
+        //devolvemos los datos cargados en el modelo de lista
+        return modelLista; 
     }
 }
