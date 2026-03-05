@@ -24,12 +24,11 @@ public class clsArticulo {
         this.precio = precio;
 
     }
-    
-    public clsArticulo() {
+        
+    public clsArticulo(){
         
     }
-
-
+    
     // imprimir en consola los datos del articulo
     public String aTexto() {
         // Solo retornamos la cadena, no imprimimos aquí
@@ -47,24 +46,17 @@ public class clsArticulo {
         // Si quieres verlo en consola una sola vez:
         System.out.println(textoArticulo);
     }
-    
-    
-    
     public DefaultListModel<String> llenarLista(){
-        /// instancia desde los daros (modelo)
-        mArticulo mArticle = new mArticulo();
-        // llenamos la variable con los datos desde le modelo
+        mArticulo MArticle = new mArticulo();
         
-        ArrayList<String> datos = mArticle.Consultar();
-        //creamos la plantilla en blanco para el modelo 
+        ArrayList<String> datos = MArticle.Consultar();
+        
         DefaultListModel<String> modelLista = new DefaultListModel<>();
-        // llenamos in plantilla con los datos del modelo
+        
         for (String registro: datos){
-            modelLista.addElement (registro);
-            
+            modelLista.addElement(registro);
         }
         
-        //devolvemos los datos cargados en el modelo de lista
-        return modelLista; 
+        return modelLista;
     }
 }

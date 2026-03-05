@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package crudinventario;
 
 import java.io.BufferedReader;
@@ -17,25 +13,18 @@ import java.util.ArrayList;
  */
 public class mClientes {
 
-    public void Insertar(String cadenaArticulo) {
+    public void Insertar(String cadenaCliente) {
         try {
-            // Esta linea crea el archivo donde se guarda la informacion
             FileWriter archivo = new FileWriter("listado_clientes.txt", true);
-            // Buffer temporal que se encarga de guardar los datos en el archivo
             BufferedWriter buffer = new BufferedWriter(archivo);
 
-            // Escribe en el archivo de texto
-            buffer.write(cadenaArticulo);
-            // Agrega un salto de linea al registro
+            buffer.write(cadenaCliente);
             buffer.newLine();
-            // Guarda los registros en el archivo
             buffer.close();
-            // lblSaludo.setText("¡Archivo guardado con éxito!");
 
         } catch (IOException e) {
-            // lblSaludo.setText("Error al guardar el archivo: " + e.getMessage());
+            System.err.println("Error al guardar el archivo: " + e.getMessage());
         }
-
     }
 
     public ArrayList<String> Consultar() {
@@ -43,19 +32,20 @@ public class mClientes {
         try (BufferedReader br = new BufferedReader(new FileReader("listado_clientes.txt"))) {
             String linea;
             while ((linea = br.readLine()) != null) {
+                if (linea.trim().isEmpty()) continue; // Salta líneas vacías
+
                 String[] datos = linea.split("\\|");
 
-                // 1. Corregimos el formato: agregamos espacios y cambiamos ';' por ':'
-                String datoBonito = "Codigo: " + datos[0] + ", Nombre: " + datos[1] + ", Tipo Cliente: " + datos[2] + ", Razon Social" + datos[3]; 
-
-                listaRegistros.add(datoBonito);
+                // Verificamos que la línea tenga los 4 campos esperados
+                if (datos.length >= 4) {
+                    String datoBonito = "No. Cliente: " + datos[0] + ", Nombre: " + datos[1] + 
+                                       ", Tipo: " + datos[2] + ", Razon Social: " + datos[3];
+                    listaRegistros.add(datoBonito);
+                }
             }
         } catch (IOException e) {
-            System.out.print("Mensaje de error: " + e.getMessage());
-            listaRegistros.add("Error al cargar los datos");
+            System.err.println("Error al leer: " + e.getMessage());
         }
-
         return listaRegistros;
     }
-
 }

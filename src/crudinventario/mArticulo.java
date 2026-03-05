@@ -55,7 +55,6 @@ public class mArticulo {
             listaRegistros.add("Error al cargar los datos");
         }
 
-        return listaRegistros;
+        return listaRegistros; 
     }
-
 }

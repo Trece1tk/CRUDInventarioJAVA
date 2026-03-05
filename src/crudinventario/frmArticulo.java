@@ -170,20 +170,34 @@ public class frmArticulo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtCodigoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-        clsArticulo cArticulo = new clsArticulo(txtCodigo.getText(), txtDescripcion.getText(),
-        Double.parseDouble(txtPrecio.getText()));
-        cArticulo.guardar();
-    }// GEN-LAST:event_jButton1ActionPerformed
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    try {
+        // Captura los datos de los campos de texto
+        String codigo = txtCodigo.getText();
+        String desc = txtDescripcion.getText();
+        Double precio = Double.parseDouble(txtPrecio.getText());
 
+        clsArticulo cArticulo = new clsArticulo(codigo, desc, precio);
+        cArticulo.guardar();
+        
+        // Limpiar campos
+        txtCodigo.setText("");
+        txtDescripcion.setText("");
+        txtPrecio.setText("");
+        
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Asegúrate de que el precio sea un número válido (ej. 10.50).");
+    }
+}
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnBuscarActionPerformed
+        clsArticulo cArticulo = new clsArticulo();
+        lstArticulo.setModel(cArticulo.llenarLista());
+    }// GEN-LAST:event_btnBuscarActionPerformed
 
     /**
      * @param args the command line arguments
