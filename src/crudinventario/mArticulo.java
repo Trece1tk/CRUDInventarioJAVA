@@ -46,7 +46,7 @@ public class mArticulo {
                 String[] datos = linea.split("\\|");
 
                 // 1. Corregimos el formato: agregamos espacios y cambiamos ';' por ':'
-                String datoBonito = "Codigo: " + datos[0] + ", Descripcion: " + datos[1] + ", Precio: " + datos[2];
+                String datoBonito = "Codigo: " + datos[0] + "| Descripcion: " + datos[1] + "| Precio: " + datos[2];
 
                 listaRegistros.add(datoBonito);
             }
