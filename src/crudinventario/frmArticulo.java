@@ -19,7 +19,9 @@ public class frmArticulo extends javax.swing.JFrame {
     public frmArticulo() {
         initComponents();
     }
-
+    //Variable para guardar temporalmente los datos del registro original a editar
+    clsArticulo updateArticulo;
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -161,6 +163,7 @@ public class frmArticulo extends javax.swing.JFrame {
         txtCodigo1.addActionListener(this::txtCodigo1ActionPerformed);
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -244,12 +247,22 @@ public class frmArticulo extends javax.swing.JFrame {
             String registroSeleccionado = lstArticulo.getSelectedValue();
             //separa los datos por el caracter especial
             String[] datos = registroSeleccionado.split("\\|");
-            txtCodigo1.setText(datos[0].replace("Codigo: ",""));
-            txtDescripcion1.setText(datos[1].replace("Descripcion: ", ""));
-            txtPrecio1.setText(datos[2].replace("Precio: ", ""));
+            //preparamos los datos para mostrar limpios
+            String codigo = datos[0].replace("Codigo: ","");
+            String descripcion = datos[1].replace("Descripcion: ", "");
+            String precio = datos[2].replace("Precio: ", "");
+            txtCodigo1.setText(codigo);
+            txtDescripcion1.setText(descripcion);
+            txtPrecio1.setText(precio);
+            // llenamos el objeto con los valores originales
+            updateArticulo = new clsArticulo(codigo, descripcion, Double.parseDouble(precio));
                     
         }
     }//GEN-LAST:event_lstArticuloValueChanged
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        updateArticulo.actualizar(txtCodigo1.getText(), txtDescripcion1.getText(), txtPrecio1.getText());
+    }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:
