@@ -34,6 +34,11 @@ public class clsArticulo {
         // Solo retornamos la cadena, no imprimimos aquí
         return this.codigo + "|" + this.descripcion + "|" + this.precio;
     }
+    
+    public String getDescripcion() {
+        return this.descripcion;
+        
+    }
 
     // guardar informacion
     public void guardar() {
@@ -61,9 +66,8 @@ public class clsArticulo {
     }
     
     public void actualizar(String newCodigo, String newDescripcion, String newPrecio){
-         String nuevaLinea = newCodigo + "|" + newDescripcion + "|" + newPrecio; 
-         
-         String lineaOriginal = this.codigo + "|" + this.descripcion + "|" + this.precio;
+         String nuevaLinea = newCodigo + "|" + newDescripcion + "|" + newPrecio ;        
+         String lineaOriginal = this.codigo + "|" + this.descripcion + "|" + this.precio ;
          //imprimir nuevos valores
          System.out.println("Nuevos valores: " + nuevaLinea);
          System.out.println("Valores actualizados: " + lineaOriginal);
@@ -75,4 +79,16 @@ public class clsArticulo {
          
     }
     
+    public void eliminar(){
+         //resgistro a eliminar 
+         String lineaOriginal = this.codigo + "|" + this.descripcion + "|" + this.precio ;
+         //imprimir nuevos valores
+         System.out.println("Valores actualizados: " + lineaOriginal);
+         //solicita la eliminacion de registros
+         mArticulo mArticle = new mArticulo();
+         mArticle.delete(lineaOriginal, "listado_articulos.txt");
+         
+         
+         
+    }
 }

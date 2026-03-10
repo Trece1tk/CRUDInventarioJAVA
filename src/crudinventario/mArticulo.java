@@ -88,7 +88,7 @@ public class mArticulo {
                 System.out.println("Registro Actualizado");
                 
             }else {
-                System.out.println("Error: No se pudo borrar el archivo");
+                System.out.println("Error: No se pudo actualizar el archivo");
             }
         }else{
             fileTemporal.delete();
@@ -97,4 +97,42 @@ public class mArticulo {
          
     }
     
+    public void delete(String lineaActual, String archivoOriginal){
+        java.io.File fileOriginal = new java.io.File(archivoOriginal);
+        java.io.File fileTemporal = new java.io.File("temporal.txt");
+        
+        String lineaLeida;
+        Boolean eliminado = false;
+        
+        try(BufferedReader br = new BufferedReader(new FileReader(fileOriginal));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileTemporal));) {
+          
+            while((lineaLeida = br.readLine()) != null){
+                if(lineaLeida.equals(lineaActual)){
+                    eliminado  = true;       
+                } else {
+                    bw.write(lineaLeida);
+                    bw.newLine();
+                }
+                
+            }
+        }catch(Exception e){
+            System.out.println("Error al eliminar" + e.getMessage());   
+        }
+        
+        //eliminacion de archivo original y renombre de temporal 
+        if(eliminado){
+            if(fileOriginal.delete()){
+                fileTemporal.renameTo(fileOriginal);
+                System.out.println("Registro Actualizado");
+                
+            }else {
+                System.out.println("Error: No se pudo borrar el archivo");
+            }
+        }else{
+            fileTemporal.delete();
+            System.out.println("No se encontro el archivo");
+        }
+         
+    }
 }
