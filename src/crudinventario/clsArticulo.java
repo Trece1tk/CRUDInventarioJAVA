@@ -65,12 +65,12 @@ public class clsArticulo {
         return modelLista;
     }
     
-    public void actualizar(String newCodigo, String newDescripcion, String newPrecio){
+    public void actualizar(String newCodigo, String newDescripcion, Double newPrecio){
          String nuevaLinea = newCodigo + "|" + newDescripcion + "|" + newPrecio ;        
          String lineaOriginal = this.codigo + "|" + this.descripcion + "|" + this.precio ;
          //imprimir nuevos valores
          System.out.println("Nuevos valores: " + nuevaLinea);
-         System.out.println("Valores actualizados: " + lineaOriginal);
+         System.out.println("Valores anterior: " + lineaOriginal);
          //solicita la actualizacion de registros
          mArticulo mArticle = new mArticulo();
          mArticle.update(lineaOriginal, nuevaLinea, "listado_articulos.txt");
@@ -83,7 +83,7 @@ public class clsArticulo {
          //resgistro a eliminar 
          String lineaOriginal = this.codigo + "|" + this.descripcion + "|" + this.precio ;
          //imprimir nuevos valores
-         System.out.println("Valores actualizados: " + lineaOriginal);
+         System.out.println("Valores anteriores: " + lineaOriginal);
          //solicita la eliminacion de registros
          mArticulo mArticle = new mArticulo();
          mArticle.delete(lineaOriginal, "listado_articulos.txt");

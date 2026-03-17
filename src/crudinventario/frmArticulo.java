@@ -336,7 +336,7 @@ public class frmArticulo extends javax.swing.JFrame {
     }//GEN-LAST:event_lstArticuloValueChanged
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        updateArticulo.actualizar(txtCodigo1.getText(), txtDescripcion1.getText(), txtPrecio1.getText());
+        updateArticulo.actualizar(txtCodigo1.getText(), txtDescripcion1.getText(), Double.parseDouble(txtPrecio1.getText()));
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
