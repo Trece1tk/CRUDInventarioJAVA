@@ -45,4 +45,31 @@ public class clsClientes {
 
         return modelLista;
     }
+    
+    // Método para obtener el nombre del cliente
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    // Método para actualizar enviando los nuevos parámetros
+    public void actualizar(int nuevoNo, String nuevoNombre, String nuevoTipo, String nuevaRazon) {
+        mClientes model = new mClientes();
+        String lineaActual = this.aTexto(); // Línea original a buscar
+        
+        clsClientes clienteActualizado = new clsClientes(nuevoNo, nuevoNombre, nuevoTipo, nuevaRazon);
+        String lineaNueva = clienteActualizado.aTexto(); // Nueva línea a escribir
+        
+        model.update(lineaActual, lineaNueva, "listado_clientes.txt");
+    }
+
+    // Método para eliminar el registro actual
+    public void eliminar() {
+        mClientes model = new mClientes();
+        String lineaActual = this.aTexto();
+        
+        model.delete(lineaActual, "listado_clientes.txt");
+    }
+    
+    
+    
 }

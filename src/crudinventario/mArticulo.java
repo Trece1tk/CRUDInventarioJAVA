@@ -124,7 +124,7 @@ public class mArticulo {
         if(eliminado){
             if(fileOriginal.delete()){
                 fileTemporal.renameTo(fileOriginal);
-                System.out.println("Registro Actualizado");
+                System.out.println("Registro Eliminado");
                 
             }else {
                 System.out.println("Error: No se pudo borrar el archivo");

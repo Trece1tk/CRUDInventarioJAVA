@@ -19,6 +19,8 @@ public class frmClientes extends javax.swing.JFrame {
         public frmClientes() {
                 initComponents();
         }
+        // Variable para guardar temporalmente los datos del registro original a editar
+        clsClientes updateCliente;
 
         /**
          * This method is called from within the constructor to initialize the form.
@@ -27,6 +29,7 @@ public class frmClientes extends javax.swing.JFrame {
          */
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated
+        
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -138,6 +141,7 @@ public class frmClientes extends javax.swing.JFrame {
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(this::btnBuscarActionPerformed);
 
+        lstClientes.addListSelectionListener(this::lstClientesValueChanged);
         jScrollPane1.setViewportView(lstClientes);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -180,6 +184,7 @@ public class frmClientes extends javax.swing.JFrame {
         jLabel9.setText("Razon Social:");
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -248,6 +253,7 @@ public class frmClientes extends javax.swing.JFrame {
         lblRazonsocial.setText("-");
 
         btnEliminar.setText("Elimiinar");
+        btnEliminar.addActionListener(this::btnEliminarActionPerformed);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -329,6 +335,74 @@ public class frmClientes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void lstClientesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstClientesValueChanged
+        // Asegura que seleccionamos a un objeto de la lista y no está vacía
+        if(!evt.getValueIsAdjusting() && lstClientes.getSelectedValue() != null){
+            String registroSeleccionado = lstClientes.getSelectedValue();
+            
+            // En mClientes.java, los datos se separan por ", "
+            String[] datos = registroSeleccionado.split(", ");
+            
+            // Preparamos los datos para mostrarlos limpios
+            String noCliente = datos[0].replace("No. Cliente: ", "");
+            String nombre = datos[1].replace("Nombre: ", "");
+            String tipo = datos[2].replace("Tipo: ", "");
+            String razon = datos[3].replace("Razon Social: ", "");
+            
+            // Llenamos los campos de texto de Actualización
+            txtNoCliente1.setText(noCliente);
+            txtNombre1.setText(nombre);
+            txtTipoCliente1.setText(tipo);
+            txtRazonSocial1.setText(razon);
+            
+            // Llenamos los labels de Eliminar
+            lblNocliente.setText(noCliente);
+            lblNombre.setText(nombre);
+            lblTipocliente.setText(tipo);
+            lblRazonsocial.setText(razon);
+            
+            // Llenamos el objeto con los valores originales (importante para buscar la línea exacta en el txt)
+            updateCliente = new clsClientes(Integer.parseInt(noCliente), nombre, tipo, razon);
+        }
+    }//GEN-LAST:event_lstClientesValueChanged
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        if(updateCliente != null) {
+            updateCliente.actualizar(
+                Integer.parseInt(txtNoCliente1.getText()), 
+                txtNombre1.getText(), 
+                txtTipoCliente1.getText(), 
+                txtRazonSocial1.getText()
+            );
+            // Opcional: Actualizar la lista automáticamente después de guardar
+            btnBuscarActionPerformed(evt);
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if(updateCliente != null) {
+            // Muestra un cuadro de diálogo preguntando si deseamos eliminar
+            int respuesta = javax.swing.JOptionPane.showConfirmDialog(this, 
+                    "¿Estás seguro que deseas eliminar el cliente: " + updateCliente.getNombre() + "?", 
+                    "Eliminación de Clientes",
+                    javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE);
+            
+            // Si la respuesta es "SI" comienza a eliminar el registro
+            if(respuesta == javax.swing.JOptionPane.YES_OPTION){
+                updateCliente.eliminar();
+                // Opcional: Actualizar la lista automáticamente después de borrar
+                btnBuscarActionPerformed(evt);
+                
+                // Limpiar labels
+                lblNocliente.setText("-");
+                lblNombre.setText("-");
+                lblTipocliente.setText("-");
+                lblRazonsocial.setText("-");
+            }
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+  
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             // 1. Capturar datos de los campos de texto del formulario de Clientes
