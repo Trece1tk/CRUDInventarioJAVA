@@ -13,6 +13,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
+
 
 /**
  *
@@ -82,6 +88,7 @@ public class frmArticulo extends javax.swing.JFrame {
         jmiArchivo = new javax.swing.JMenu();
         jmiImportar = new javax.swing.JMenuItem();
         jmiExportar = new javax.swing.JMenuItem();
+        jmiPdf = new javax.swing.JMenuItem();
         jmiInformacion = new javax.swing.JMenu();
 
         jMenu1.setText("File");
@@ -318,6 +325,10 @@ public class frmArticulo extends javax.swing.JFrame {
         jmiExportar.addActionListener(this::jmiExportarActionPerformed);
         jmiArchivo.add(jmiExportar);
 
+        jmiPdf.setText("Generar Reporte PDF");
+        jmiPdf.addActionListener(this::jmiPdfActionPerformed);
+        jmiArchivo.add(jmiPdf);
+
         jmenu.add(jmiArchivo);
 
         jmiInformacion.setText("Del Joelillo");
@@ -465,6 +476,78 @@ public class frmArticulo extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_jmiExportarActionPerformed
 
+    private void jmiPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPdfActionPerformed
+        Document documento = new Document();    
+        try {
+            // 1. Configuración del archivo de salida
+            PdfWriter.getInstance(documento, new FileOutputStream("Reporte_Inventario.pdf"));
+
+            documento.open();
+
+            // 2. Títulos del reporte
+            documento.add(new Paragraph("Reporte Gerencial de Inventario - Taller 360"));
+            documento.add(new Paragraph(" ")); // Espacio en blanco
+
+            // 3. Estructura de la tabla (4 columnas: Código, Descripción, Precio, Estatus)
+            PdfPTable tabla = new PdfPTable(4);
+
+            // 4. Encabezados
+            tabla.addCell("CÓDIGO");
+            tabla.addCell("DESCRIPCIÓN");
+            tabla.addCell("PRECIO ($)");
+            tabla.addCell("STATUS");
+
+            // 5. Opciones para el estatus aleatorio
+            String[] estados = {"Disponible", "Agotado", "En Tránsito", "Descontinuado"};
+            java.util.Random random = new java.util.Random();
+
+            // 6. Lectura y llenado de datos
+            BufferedReader br = new BufferedReader(new FileReader("listado_articulos.txt"));
+            String linea;
+            
+            // NUEVO: Variable para almacenar la suma total de los precios
+            double sumaTotal = 0.0;
+
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split("\\|");
+                if (datos.length >= 3) {
+                    // Datos del archivo
+                    tabla.addCell(datos[0]); // Código
+                    tabla.addCell(datos[1]); // Descripción
+                    tabla.addCell(datos[2]); // Precio
+                    
+                    // NUEVO: Convertir el precio a double y sumarlo al total
+                    try {
+                        sumaTotal += Double.parseDouble(datos[2]);
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Error al formatear el precio del artículo: " + datos[0]);
+                    }
+
+                    // Generar estatus aleatorio para esta fila
+                    String estatusAleatorio = estados[random.nextInt(estados.length)];
+                    tabla.addCell(estatusAleatorio); 
+                }
+            }
+            br.close();
+
+            // 7. Agregar tabla al documento
+            documento.add(tabla);
+            
+            // NUEVO: Agregar la suma total al final del documento
+            documento.add(new Paragraph(" ")); // Espacio en blanco
+            // Damos formato al texto para que muestre 2 decimales
+            documento.add(new Paragraph("Suma Total del Inventario: $" + String.format("%.2f", sumaTotal)));
+
+            documento.close();
+
+            javax.swing.JOptionPane.showMessageDialog(this, "¡PDF generado con éxito con columna de estatus y suma total!");
+
+        } catch (Exception e) {
+            System.out.println("Error al generar el PDF: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jmiPdfActionPerformed
+
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtCodigoActionPerformed
@@ -555,6 +638,7 @@ private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem jmiExportar;
     private javax.swing.JMenuItem jmiImportar;
     private javax.swing.JMenu jmiInformacion;
+    private javax.swing.JMenuItem jmiPdf;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblPrecio;
