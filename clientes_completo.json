@@ -1,0 +1,74 @@
+[
+  {
+    "noCliente": 585,
+    "nombre": "Jorgillo nigga",
+    "tipoCliente": "hola",
+    "razonSocial": "JORGE10"
+  },
+  {
+    "noCliente": 2366,
+    "nombre": "Bolillo",
+    "tipoCliente": "Pan",
+    "razonSocial": "pan1236"
+  },
+  {
+    "noCliente": 1001,
+    "nombre": "Juan Carlos Perez",
+    "tipoCliente": "Fisica",
+    "razonSocial": "N/A"
+  },
+  {
+    "noCliente": 1002,
+    "nombre": "Maria Fernandez",
+    "tipoCliente": "Moral",
+    "razonSocial": "Agropecuaria Los Altos SA de CV"
+  },
+  {
+    "noCliente": 1003,
+    "nombre": "Luis Hernandez",
+    "tipoCliente": "Moral",
+    "razonSocial": "Taller 360 SA de CV"
+  },
+  {
+    "noCliente": 1004,
+    "nombre": "Ana Gomez",
+    "tipoCliente": "Fisica",
+    "razonSocial": "N/A"
+  },
+  {
+    "noCliente": 1005,
+    "nombre": "Pedro Gutierrez",
+    "tipoCliente": "Moral",
+    "razonSocial": "Avicola San Juan SPR de RL"
+  },
+  {
+    "noCliente": 1006,
+    "nombre": "Sofia Ramirez",
+    "tipoCliente": "Fisica",
+    "razonSocial": "N/A"
+  },
+  {
+    "noCliente": 1007,
+    "nombre": "Carlos Mendoza",
+    "tipoCliente": "Moral",
+    "razonSocial": "Transportes Terrestres del Bajio SA de CV"
+  },
+  {
+    "noCliente": 1008,
+    "nombre": "Laura Torres",
+    "tipoCliente": "Fisica",
+    "razonSocial": "N/A"
+  },
+  {
+    "noCliente": 1009,
+    "nombre": "Miguel Angel Orozco",
+    "tipoCliente": "Moral",
+    "razonSocial": "Constructora Orozco y Asociados SC"
+  },
+  {
+    "noCliente": 1010,
+    "nombre": "Elena Castro",
+    "tipoCliente": "Moral",
+    "razonSocial": "Distribuidora Veterinaria Central SA de CV"
+  }
+]

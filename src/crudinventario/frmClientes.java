@@ -4,6 +4,21 @@
  */
 package crudinventario;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Joel Flores
@@ -69,6 +84,12 @@ public class frmClientes extends javax.swing.JFrame {
         lblTipocliente = new javax.swing.JLabel();
         lblRazonsocial = new javax.swing.JLabel();
         btnEliminar = new javax.swing.JButton();
+        jmenu = new javax.swing.JMenuBar();
+        jmiArchivo = new javax.swing.JMenu();
+        jmiImportar = new javax.swing.JMenuItem();
+        jmiExportar = new javax.swing.JMenuItem();
+        jmiPdf = new javax.swing.JMenuItem();
+        jmiInformacion = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -113,7 +134,7 @@ public class frmClientes extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtNoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -130,8 +151,7 @@ public class frmClientes extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(txtRazonSocial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnGuardar)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addComponent(btnGuardar))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Busqueda de Clientes"));
@@ -170,7 +190,7 @@ public class frmClientes extends javax.swing.JFrame {
                     .addComponent(btnBuscar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Actualizacion de Clientes"));
@@ -229,7 +249,7 @@ public class frmClientes extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(txtRazonSocial1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(btnActualizar)
                 .addContainerGap())
         );
@@ -302,6 +322,28 @@ public class frmClientes extends javax.swing.JFrame {
                 .addComponent(btnEliminar)
                 .addContainerGap())
         );
+
+        jmiArchivo.setText("Archivo");
+        jmiArchivo.addActionListener(this::jmiArchivoActionPerformed);
+
+        jmiImportar.setText("Importar CSV");
+        jmiImportar.addActionListener(this::jmiImportarActionPerformed);
+        jmiArchivo.add(jmiImportar);
+
+        jmiExportar.setText("Exportar JSON");
+        jmiExportar.addActionListener(this::jmiExportarActionPerformed);
+        jmiArchivo.add(jmiExportar);
+
+        jmiPdf.setText("Generar Reporte PDF");
+        jmiPdf.addActionListener(this::jmiPdfActionPerformed);
+        jmiArchivo.add(jmiPdf);
+
+        jmenu.add(jmiArchivo);
+
+        jmiInformacion.setText("Del Joelillo");
+        jmenu.add(jmiInformacion);
+
+        setJMenuBar(jmenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -402,6 +444,126 @@ public class frmClientes extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void jmiImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiImportarActionPerformed
+        // TODO add your handling code here:
+        int respuesta = JOptionPane.showConfirmDialog(this, "Es importante que el archivo a importar tenga el nombre " +
+            " Clientes.csv y que se encuentre en la raiz del proyecto","Importacion de datos desde el archivo CSV", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (respuesta == JOptionPane.YES_OPTION){
+            clsCsv cCsv = new clsCsv();
+            cCsv.importarDatosClientes();
+
+        }
+    }//GEN-LAST:event_jmiImportarActionPerformed
+
+    private void jmiExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiExportarActionPerformed
+        try {
+            // 1. Preparamos una lista (La "caja") para guardar todos los clientes temporalmente en RAM
+            List<clsClientes> listaClientes = new ArrayList<>();
+
+            // 2. Abrimos el archivo de texto plano para lectura
+            BufferedReader br = new BufferedReader(new FileReader("listado_clientes.txt"));
+            String linea;
+
+            // 3. Recorremos el archivo secuencial línea por línea
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split("\\|");
+
+                // Verificamos que la línea tenga las 4 partes para evitar errores
+                if (datos.length >= 4) {
+                    // Creamos el objeto y lo metemos a la lista
+                    clsClientes nuevoCliente = new clsClientes(Integer.parseInt(datos[0]), datos[1], datos[2], datos[3]);
+                    listaClientes.add(nuevoCliente);
+                }
+            }
+            br.close(); // Siempre cerrar el flujo de lectura
+
+            // ==========================================
+            // 4. LA MAGIA DE GSON (Serialización Masiva)
+            // ==========================================
+
+            // TIP DE INGENIERÍA: En lugar de usar 'new Gson()', usamos GsonBuilder
+            // con 'setPrettyPrinting' para que el archivo salga formateado con tabulaciones
+            // y saltos de línea (ideal para que los alumnos lo puedan leer fácil).
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            // Convertimos TODA la lista a un solo String con formato JSON
+            String jsonFinal = gson.toJson(listaClientes);
+
+            // 5. Guardamos el String gigante en un archivo nuevo .json
+            BufferedWriter bw = new BufferedWriter(new FileWriter("clientes_completo.json"));
+            bw.write(jsonFinal);
+            bw.close();
+
+            JOptionPane.showMessageDialog(this, "¡Exportación masiva a JSON exitosa!");
+
+        } catch (Exception e) {
+            System.out.println(" Error durante la exportación a JSON: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jmiExportarActionPerformed
+
+    private void jmiPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPdfActionPerformed
+        Document documento = new Document();
+        try {
+            // 1. Configuración del archivo de salida
+            PdfWriter.getInstance(documento, new FileOutputStream("Reporte_Clientes.pdf"));
+
+            documento.open();
+
+            // 2. Títulos del reporte
+            documento.add(new Paragraph("Reporte de Clientes - Taller 360"));
+            documento.add(new Paragraph(" ")); // Espacio en blanco
+
+            // 3. Estructura de la tabla (4 columnas: No Cliente, Nombre, Tipo, Razon Social)
+            PdfPTable tabla = new PdfPTable(4);
+
+            // 4. Encabezados
+            tabla.addCell("NO CLIENTE");
+            tabla.addCell("NOMBRE");
+            tabla.addCell("TIPO");
+            tabla.addCell("RAZON SOCIAL");
+
+            // 6. Lectura y llenado de datos
+            BufferedReader br = new BufferedReader(new FileReader("listado_clientes.txt"));
+            String linea;
+
+            int totalClientes = 0;
+
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split("\\|");
+                if (datos.length >= 4) {
+                    // Datos del archivo
+                    tabla.addCell(datos[0]); // No Cliente
+                    tabla.addCell(datos[1]); // Nombre
+                    tabla.addCell(datos[2]); // Tipo
+                    tabla.addCell(datos[3]); // Razon Social
+
+                    totalClientes++;
+                }
+            }
+            br.close();
+
+            // 7. Agregar tabla al documento
+            documento.add(tabla);
+
+            // NUEVO: Agregar la suma total al final del documento
+            documento.add(new Paragraph(" ")); // Espacio en blanco
+            documento.add(new Paragraph("Total de clientes: " + totalClientes));
+
+            documento.close();
+
+            javax.swing.JOptionPane.showMessageDialog(this, "¡PDF generado con éxito!");
+
+        } catch (Exception e) {
+            System.out.println("Error al generar el PDF: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jmiPdfActionPerformed
+
+    private void jmiArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiArchivoActionPerformed
+
+    }//GEN-LAST:event_jmiArchivoActionPerformed
+
   
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
@@ -486,6 +648,12 @@ public class frmClientes extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuBar jmenu;
+    private javax.swing.JMenu jmiArchivo;
+    private javax.swing.JMenuItem jmiExportar;
+    private javax.swing.JMenuItem jmiImportar;
+    private javax.swing.JMenu jmiInformacion;
+    private javax.swing.JMenuItem jmiPdf;
     private javax.swing.JLabel lblNocliente;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblRazonsocial;

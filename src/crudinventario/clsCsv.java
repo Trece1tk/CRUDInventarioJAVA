@@ -33,4 +33,23 @@ public class clsCsv {
             System.out.println("Mensaje de error" + e.getMessage());
         }
     }
+
+    public void importarDatosClientes(){    
+        String archivoClientes = "Clientes.csv";
+        try(BufferedReader br = new BufferedReader(new FileReader(archivoClientes))){        
+            br.readLine();   
+            String linea;         
+            while ((linea = br.readLine()) != null){
+                String[] datos = linea.split(",");
+
+                clsClientes cCliente = new clsClientes(Integer.parseInt(datos[0]), datos[1], datos[2], datos[3]);
+                
+                cCliente.guardar();
+                }
+            br.close();
+            System.out.println("Se ha terminado la importacion.");    
+        }catch(IOException e){
+            System.out.println("Mensaje de error" + e.getMessage());
+        }
+    }
 }
