@@ -18,6 +18,14 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileOutputStream;
 import javax.swing.JOptionPane;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import java.text.SimpleDateFormat;
+import com.itextpdf.text.Phrase;
+import java.util.Date;
 
 /**
  *
@@ -89,6 +97,7 @@ public class frmClientes extends javax.swing.JFrame {
         jmiImportar = new javax.swing.JMenuItem();
         jmiExportar = new javax.swing.JMenuItem();
         jmiPdf = new javax.swing.JMenuItem();
+        jmiReportemamalon = new javax.swing.JMenuItem();
         jmiInformacion = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -338,6 +347,10 @@ public class frmClientes extends javax.swing.JFrame {
         jmiPdf.addActionListener(this::jmiPdfActionPerformed);
         jmiArchivo.add(jmiPdf);
 
+        jmiReportemamalon.setText("Reporte Mamalon");
+        jmiReportemamalon.addActionListener(this::jmiReportemamalonActionPerformed);
+        jmiArchivo.add(jmiReportemamalon);
+
         jmenu.add(jmiArchivo);
 
         jmiInformacion.setText("Del Joelillo");
@@ -510,6 +523,20 @@ public class frmClientes extends javax.swing.JFrame {
 
             documento.open();
 
+            // Agregar imagen en la parte superior derecha
+            try {
+                com.itextpdf.text.Image img = com.itextpdf.text.Image.getInstance("src/crudinventario/2151f50f92bdf22cd138556ecbef2760.jpg");
+                img.scaleToFit(100, 100);
+                // Posicionar en la parte superior derecha
+                img.setAbsolutePosition(480f, 730f);
+                documento.add(img);
+            } catch (Exception ex) {
+                System.out.println("Error al cargar la imagen: " + ex.getMessage());
+            }
+
+            // Espaciado para evitar que el texto y la tabla se sobrepongan a la imagen
+            documento.add(new Paragraph("\n\n\n\n\n"));
+
             // 2. Títulos del reporte
             documento.add(new Paragraph("Reporte de Clientes - Taller 360"));
             documento.add(new Paragraph(" ")); // Espacio en blanco
@@ -563,6 +590,96 @@ public class frmClientes extends javax.swing.JFrame {
     private void jmiArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiArchivoActionPerformed
 
     }//GEN-LAST:event_jmiArchivoActionPerformed
+
+    private void jmiReportemamalonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiReportemamalonActionPerformed
+        // 1. Configuramos fuentes profesionales (Tamaños y Colores)
+        Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
+        Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.DARK_GRAY);
+        Font fuenteCabeceraTabla = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
+
+        Document documento = new Document();
+
+        try {
+            // Preparamos el escritor
+            PdfWriter.getInstance(documento, new FileOutputStream("Reporte_Clientes_Mamalon.pdf"));
+            documento.open();
+
+            // 2. Agregamos el Logo (Alineado a la derecha)
+            try {
+                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("src/crudinventario/2151f50f92bdf22cd138556ecbef2760.jpg");
+                logo.scaleToFit(120, 80); 
+                logo.setAlignment(Element.ALIGN_RIGHT);
+                documento.add(logo);
+            } catch (Exception e) {
+                System.out.println("Aviso: No se encontró la imagen del logo.");
+            }
+
+            // 3. Encabezado Corporativo de la Empresa
+            Paragraph nombreEmpresa = new Paragraph("TALLER 360 S.A. DE C.V.", fuenteTitulo);
+            nombreEmpresa.setAlignment(Element.ALIGN_LEFT);
+            documento.add(nombreEmpresa);
+
+            Paragraph tituloReporte = new Paragraph("Reporte Gerencial de Clientes", fuenteSubtitulo);
+            documento.add(tituloReporte);
+
+            // Agregamos la fecha y hora exacta del reporte
+            String fechaActual = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+            Paragraph fecha = new Paragraph("Fecha de impresión: " + fechaActual, fuenteSubtitulo);
+            fecha.setSpacingAfter(20f); // Damos 20 puntos de espacio antes de que empiece la tabla
+            documento.add(fecha);
+
+            // 4. Mejoramos la estructura de la Tabla
+            PdfPTable tabla = new PdfPTable(4);
+            tabla.setWidthPercentage(100); // El ancho de la hoja
+            tabla.setWidths(new float[]{2f, 4f, 3f, 4f}); 
+
+            // 5. Cabeceras con Estilo y Color de Fondo
+            String[] cabeceras = {"NO CLIENTE", "NOMBRE", "TIPO", "RAZON SOCIAL"};
+            for (String texto : cabeceras) {
+                PdfPCell celda = new PdfPCell(new Phrase(texto, fuenteCabeceraTabla));
+                celda.setBackgroundColor(new BaseColor(41, 128, 185)); // Un azul
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                celda.setPadding(8f); // Agregamos especiado a las cabeceras
+                tabla.addCell(celda);
+            }
+
+            // 6. Lectura de datos desde el archivo .txt
+            BufferedReader br = new BufferedReader(new FileReader("listado_clientes.txt"));
+            String linea;
+            int totalClientes = 0;
+
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split("\\|");
+                if (datos.length >= 4) {
+
+                    // Usamos PdfPCell para inyectar los datos, así podemos alinear los textos
+                    tabla.addCell(new PdfPCell(new Phrase(datos[0])));
+                    tabla.addCell(new PdfPCell(new Phrase(datos[1])));
+                    tabla.addCell(new PdfPCell(new Phrase(datos[2])));
+                    tabla.addCell(new PdfPCell(new Phrase(datos[3])));
+                    
+                    totalClientes++;
+                }
+            }
+            br.close();
+
+            // Inyectamos la tabla al documento
+            documento.add(tabla);
+
+            // 7. Resaltamos el Total al final del reporte
+            Font fuenteTotal = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.RED);
+            Paragraph textoTotal = new Paragraph("\nTotal de Clientes Registrados: " + totalClientes, fuenteTotal);
+            textoTotal.setAlignment(Element.ALIGN_RIGHT); 
+            documento.add(textoTotal);
+
+            documento.close();
+            javax.swing.JOptionPane.showMessageDialog(this, "¡PDF generado con éxito en la carpeta del proyecto!");
+
+        } catch (Exception e) {
+            System.out.println("Error al generar el PDF: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jmiReportemamalonActionPerformed
 
   
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
@@ -654,6 +771,7 @@ public class frmClientes extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmiImportar;
     private javax.swing.JMenu jmiInformacion;
     private javax.swing.JMenuItem jmiPdf;
+    private javax.swing.JMenuItem jmiReportemamalon;
     private javax.swing.JLabel lblNocliente;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblRazonsocial;
