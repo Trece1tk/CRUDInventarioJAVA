@@ -26,6 +26,12 @@ import com.itextpdf.text.Element;
 import java.text.SimpleDateFormat;
 import com.itextpdf.text.Phrase;
 import java.util.Date;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+import java.io.File;
+import org.jfree.chart.ChartUtils;
 
 /**
  *
@@ -630,6 +636,8 @@ public class frmArticulo extends javax.swing.JFrame {
             BufferedReader br = new BufferedReader(new FileReader("listado_articulos.txt"));
             String linea;
             double totalInversion = 0;
+            int articulosEconomicos = 0;
+            int articulosPremium = 0;
 
             while ((linea = br.readLine()) != null) {
                 String[] datos = linea.split("\\|");
@@ -645,7 +653,13 @@ public class frmArticulo extends javax.swing.JFrame {
                     tabla.addCell(celdaPrecio);
 
                     try {
-                        totalInversion += Double.parseDouble(datos[2]);
+                        double precioDouble = Double.parseDouble(datos[2]);
+                        totalInversion += precioDouble;
+                        if (precioDouble <= 500.0) {
+                            articulosEconomicos++;
+                        } else {
+                            articulosPremium++;
+                        }
                     } catch (Exception e) {}
 
                     String status = (Math.random() > 0.5) ? "Disponible" : "Agotado";
@@ -665,6 +679,27 @@ public class frmArticulo extends javax.swing.JFrame {
             textoTotal.setAlignment(Element.ALIGN_RIGHT); 
             documento.add(textoTotal);
 
+            // 1. Llenamos el Dataset con los totales calculados
+            DefaultPieDataset dataset = new DefaultPieDataset();
+            dataset.setValue("Económicos (<= $500)", articulosEconomicos);
+            dataset.setValue("Premium (> $500)", articulosPremium);
+
+            // 2. Creamos la gráfica
+            JFreeChart grafica = ChartFactory.createPieChart(
+                    "Análisis de Precios de Inventario",
+                    dataset, true, true, false);
+
+            // 3. Guardamos como PNG temporal
+            File archivoTemporal = new java.io.File("grafica_temp.png");
+            ChartUtils.saveChartAsPNG(archivoTemporal, grafica, 500, 300);
+
+            // 4. Inyectamos la gráfica en el documento
+            com.itextpdf.text.Image imgGrafica = com.itextpdf.text.Image.getInstance("grafica_temp.png");
+            imgGrafica.scaleToFit(400, 250);
+            imgGrafica.setAlignment(Element.ALIGN_CENTER);
+            documento.add(new Paragraph(" "));
+            documento.add(imgGrafica);
+
             documento.close();
             javax.swing.JOptionPane.showMessageDialog(this, "¡PDF generado con éxito en la carpeta del proyecto!");
 
@@ -673,6 +708,7 @@ public class frmArticulo extends javax.swing.JFrame {
             javax.swing.JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jmiReportemamalonActionPerformed
+
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:

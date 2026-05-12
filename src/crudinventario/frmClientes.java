@@ -26,6 +26,11 @@ import com.itextpdf.text.Element;
 import java.text.SimpleDateFormat;
 import com.itextpdf.text.Phrase;
 import java.util.Date;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+import java.io.File;
 
 /**
  *
@@ -647,6 +652,8 @@ public class frmClientes extends javax.swing.JFrame {
             BufferedReader br = new BufferedReader(new FileReader("listado_clientes.txt"));
             String linea;
             int totalClientes = 0;
+            int clientesFisica = 0;
+            int clientesMoral = 0;
 
             while ((linea = br.readLine()) != null) {
                 String[] datos = linea.split("\\|");
@@ -657,6 +664,12 @@ public class frmClientes extends javax.swing.JFrame {
                     tabla.addCell(new PdfPCell(new Phrase(datos[1])));
                     tabla.addCell(new PdfPCell(new Phrase(datos[2])));
                     tabla.addCell(new PdfPCell(new Phrase(datos[3])));
+                    
+                    if (datos[2].trim().equalsIgnoreCase("Fisica")) {
+                        clientesFisica++;
+                    } else if (datos[2].trim().equalsIgnoreCase("Moral")) {
+                        clientesMoral++;
+                    }
                     
                     totalClientes++;
                 }
@@ -671,6 +684,27 @@ public class frmClientes extends javax.swing.JFrame {
             Paragraph textoTotal = new Paragraph("\nTotal de Clientes Registrados: " + totalClientes, fuenteTotal);
             textoTotal.setAlignment(Element.ALIGN_RIGHT); 
             documento.add(textoTotal);
+
+            // 1. Llenamos el Dataset con los totales calculados
+            DefaultPieDataset dataset = new DefaultPieDataset();
+            dataset.setValue("Física", clientesFisica);
+            dataset.setValue("Moral", clientesMoral);
+
+            // 2. Creamos la gráfica
+            JFreeChart grafica = ChartFactory.createPieChart(
+                    "Análisis de Tipos de Cliente",
+                    dataset, true, true, false);
+
+            // 3. Guardamos como PNG temporal
+            File archivoTemporal = new java.io.File("grafica_clientes_temp.png");
+            ChartUtils.saveChartAsPNG(archivoTemporal, grafica, 500, 300);
+
+            // 4. Inyectamos la gráfica en el documento
+            com.itextpdf.text.Image imgGrafica = com.itextpdf.text.Image.getInstance("grafica_clientes_temp.png");
+            imgGrafica.scaleToFit(400, 250);
+            imgGrafica.setAlignment(Element.ALIGN_CENTER);
+            documento.add(new Paragraph(" "));
+            documento.add(imgGrafica);
 
             documento.close();
             javax.swing.JOptionPane.showMessageDialog(this, "¡PDF generado con éxito en la carpeta del proyecto!");
